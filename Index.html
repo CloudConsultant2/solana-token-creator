@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solana SPL Token Creator</title>
+</head>
+<body>
+    <h1>Solana SPL Token Creator</h1>
+    <form id="tokenForm">
+        <label for="tokenName">Token Name:</label>
+        <input type="text" id="tokenName" name="tokenName" required><br><br>
+        <label for="tokenSymbol">Token Symbol:</label>
+        <input type="text" id="tokenSymbol" name="tokenSymbol" required><br><br>
+        <label for="tokenDecimals">Decimals:</label>
+        <input type="number" id="tokenDecimals" name="tokenDecimals" required><br><br>
+        <label for="tokenSupply">Total Supply:</label>
+        <input type="number" id="tokenSupply" name="tokenSupply" required><br><br>
+        <button type="submit">Create Token</button>
+    </form>
+
+    <script src="app.js"></script>
+</body>
+</html>
