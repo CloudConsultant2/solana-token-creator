@@ -4,8 +4,10 @@ import { Token, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 // Connect to the Solana Devnet (change to Mainnet if needed)
 const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
 
-// Global variable to store the connected wallet
-let wallet = null;
+// Global variables
+let wallet = null; // Connected wallet
+let mintKeypair = null; // Token mint keypair
+let tokenDecimals = null; // Token decimals
 
 // Function to connect to Phantom Wallet
 async function connectWallet() {
@@ -18,6 +20,7 @@ async function connectWallet() {
     try {
         await provider.connect();
         wallet = provider.publicKey;
+        console.log('Wallet connected:', wallet.toString());
         document.getElementById('walletStatus').textContent = `Wallet connected: ${wallet.toString()}`;
         alert('Wallet connected successfully!');
     } catch (error) {
@@ -35,7 +38,8 @@ async function createToken(tokenName, tokenSymbol, decimals, supply) {
 
     try {
         // Generate a new keypair for the token
-        const mintKeypair = Keypair.generate();
+        mintKeypair = Keypair.generate();
+        tokenDecimals = decimals;
 
         // Create the token
         const token = await Token.createMint(
@@ -64,6 +68,98 @@ async function createToken(tokenName, tokenSymbol, decimals, supply) {
         alert('Failed to create token. Please check the console for details.');
     }
 }
+
+// Invoke Mint
+document.getElementById('invokeMint').addEventListener('click', async () => {
+    if (!wallet || !mintKeypair) {
+        alert('Please connect your wallet and create a token first!');
+        return;
+    }
+
+    const mintAmount = prompt('Enter the amount to mint:'); // Example: 1000
+    if (!mintAmount) return;
+
+    try {
+        const token = new Token(
+            connection,
+            mintKeypair.publicKey,
+            TOKEN_PROGRAM_ID,
+            wallet
+        );
+
+        const associatedTokenAccount = await token.getOrCreateAssociatedAccountInfo(wallet);
+        await token.mintTo(
+            associatedTokenAccount.address,
+            wallet,
+            [],
+            mintAmount * Math.pow(10, tokenDecimals)
+        );
+
+        alert(`Minted ${mintAmount} tokens successfully!`);
+    } catch (error) {
+        console.error('Error minting tokens:', error);
+        alert('Failed to mint tokens. Please check the console for details.');
+    }
+});
+
+// Invoke Freeze
+document.getElementById('invokeFreeze').addEventListener('click', async () => {
+    if (!wallet || !mintKeypair) {
+        alert('Please connect your wallet and create a token first!');
+        return;
+    }
+
+    try {
+        const token = new Token(
+            connection,
+            mintKeypair.publicKey,
+            TOKEN_PROGRAM_ID,
+            wallet
+        );
+
+        const associatedTokenAccount = await token.getOrCreateAssociatedAccountInfo(wallet);
+        await token.freezeAccount(
+            associatedTokenAccount.address,
+            mintKeypair.publicKey,
+            wallet,
+            []
+        );
+
+        alert('Account frozen successfully!');
+    } catch (error) {
+        console.error('Error freezing account:', error);
+        alert('Failed to freeze account. Please check the console for details.');
+    }
+});
+
+// Invoke Revoke
+document.getElementById('invokeRevoke').addEventListener('click', async () => {
+    if (!wallet || !mintKeypair) {
+        alert('Please connect your wallet and create a token first!');
+        return;
+    }
+
+    try {
+        const token = new Token(
+            connection,
+            mintKeypair.publicKey,
+            TOKEN_PROGRAM_ID,
+            wallet
+        );
+
+        const associatedTokenAccount = await token.getOrCreateAssociatedAccountInfo(wallet);
+        await token.revoke(
+            associatedTokenAccount.address,
+            wallet,
+            []
+        );
+
+        alert('Account revoked successfully!');
+    } catch (error) {
+        console.error('Error revoking account:', error);
+        alert('Failed to revoke account. Please check the console for details.');
+    }
+});
 
 // Handle Connect Wallet button click
 document.getElementById('connectWallet').addEventListener('click', connectWallet);

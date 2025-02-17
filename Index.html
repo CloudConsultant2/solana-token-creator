@@ -28,6 +28,7 @@
             color: white;
             border: none;
             cursor: pointer;
+            margin-right: 10px;
         }
         button:hover {
             background-color: #0056b3;
@@ -54,6 +55,11 @@
         <input type="number" id="tokenSupply" name="tokenSupply" required><br><br>
         <button type="submit">Create Token</button>
     </form>
+
+    <h2>Token Management</h2>
+    <button id="invokeMint">Invoke Mint</button>
+    <button id="invokeFreeze">Invoke Freeze</button>
+    <button id="invokeRevoke">Invoke Revoke</button>
 
     <script type="module" src="app.js"></script>
 </body>
