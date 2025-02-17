@@ -1,5 +1,10 @@
 import { Connection, Keypair } from '@solana/web3.js';
 import { Token, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+if (!window.solana) {
+    alert('Phantom Wallet is not installed. Please install it to continue.');
+} else {
+    console.log('Phantom Wallet is installed!');
+}
 
 // Connect to the Solana Devnet (change to Mainnet if needed)
 const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
